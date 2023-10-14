@@ -15,9 +15,8 @@ class Player {
     image.src = "./spaceship.png";
     image.onload = () => {
       this.image = image;
-      this.width = image.width * 0.1;
+      this.width = image.width *0.1;
       this.height = image.height * 0.1;
-
       this.position = {
         x: canvas.width / 2 - this.width / 2,
         y: canvas.height - this.height - 30,
@@ -128,7 +127,6 @@ class EnemyGrid {
         );
       }
     }
-    console.log(this.invaders);
   }
   update() {
     this.position.x += this.velocity.x;
@@ -170,7 +168,7 @@ function animate() {
     grid.invaders.forEach((invader) => {
       invader.update({
         velocity: {
-          x: 3,
+          x: grid.velocity.x,
         },
       });
     });
