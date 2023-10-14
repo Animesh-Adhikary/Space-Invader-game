@@ -15,7 +15,7 @@ class Player {
     image.src = "./spaceship.png";
     image.onload = () => {
       this.image = image;
-      this.width = image.width *0.1;
+      this.width = image.width * 0.1;
       this.height = image.height * 0.1;
       this.position = {
         x: canvas.width / 2 - this.width / 2,
@@ -54,7 +54,6 @@ class Invader {
       this.image = image;
       this.width = image.width * 0.07;
       this.height = image.height * 0.07;
-      // console.log(this.width, this.height)
       this.position = {
         x: position.x,
         y: position.y,
@@ -75,6 +74,7 @@ class Invader {
     if (this.image) {
       this.draw();
       this.position.x += velocity.x;
+      this.position.y += velocity.y;
     }
   }
 }
@@ -115,6 +115,7 @@ class EnemyGrid {
 
     const row = Math.floor(Math.random() * 5 + 5);
     const col = Math.floor(Math.random() * 5 + 3);
+    this.width = row * 52.64;
     for (let i = 0; i < row; i++) {
       for (let j = 0; j < col; j++) {
         this.invaders.push(
@@ -131,6 +132,11 @@ class EnemyGrid {
   update() {
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
+    if (this.position.x + this.width >= canvas.width || this.position.x <= 0) {
+      this.velocity.x = -this.velocity.x;
+    }
+    // console.log(this.position.x + this.width);
+    // console.log(canvas.width);
   }
 }
 
@@ -165,11 +171,10 @@ function animate() {
   c.fillRect(0, 0, canvas.width, canvas.height);
 
   grids.forEach((grid) => {
+    grid.update();
     grid.invaders.forEach((invader) => {
       invader.update({
-        velocity: {
-          x: grid.velocity.x,
-        },
+        velocity: grid.velocity,
       });
     });
   });
@@ -186,14 +191,14 @@ function animate() {
   });
 
   // rocket player position changing
-  if ((keys.a.pressed || keys.ArrowLeft.pressed) && player.position.x >= 0) {
+  if ((keys.a.pressed || keys.ArrowLeft.pressed) && player.position.x >= 0)
     player.velocity.x = -5;
-  } else if (
+  else if (
     (keys.d.pressed || keys.ArrowRight.pressed) &&
     player.position.x + player.width <= canvas.width
-  ) {
+  )
     player.velocity.x = 5;
-  } else player.velocity.x = 0;
+  else player.velocity.x = 0;
 }
 animate();
 
@@ -228,7 +233,6 @@ addEventListener("keydown", ({ key }) => {
           },
         })
       );
-      // console.log(projectiles)
       break;
   }
 });
