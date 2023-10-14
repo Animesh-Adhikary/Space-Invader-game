@@ -44,7 +44,7 @@ class Player {
 
 // for invader/enemy
 class Invader {
-  constructor() {
+  constructor({ position }) {
     this.velocity = {
       x: 0,
       y: 0,
@@ -53,12 +53,12 @@ class Invader {
     image.src = "./invader.png";
     image.onload = () => {
       this.image = image;
-      this.width = image.width * 0.1;
-      this.height = image.height * 0.1;
-
+      this.width = image.width * 0.07;
+      this.height = image.height * 0.07;
+      // console.log(this.width, this.height)
       this.position = {
-        x: canvas.width / 2 - this.width / 2,
-        y: 30,
+        x: position.x,
+        y: position.y,
       };
     };
   }
@@ -72,10 +72,10 @@ class Invader {
       this.height
     );
   }
-  update() {
+  update({ velocity }) {
     if (this.image) {
       this.draw();
-      this.position.x += this.velocity.x;
+      this.position.x += velocity.x;
     }
   }
 }
@@ -101,16 +101,45 @@ class Projectile {
   }
 }
 
-class InvaderGrid{
-  constructor(){
-    
+// for Invader grid
+class EnemyGrid {
+  constructor() {
+    this.position = {
+      x: 0,
+      y: 0,
+    };
+    this.velocity = {
+      x: 3,
+      y: 0,
+    };
+    this.invaders = [];
+
+    const row = Math.floor(Math.random() * 5 + 5);
+    const col = Math.floor(Math.random() * 5 + 3);
+    for (let i = 0; i < row; i++) {
+      for (let j = 0; j < col; j++) {
+        this.invaders.push(
+          new Invader({
+            position: {
+              x: i * 52.64,
+              y: j * 50.4,
+            },
+          })
+        );
+      }
+    }
+    console.log(this.invaders);
+  }
+  update() {
+    this.position.x += this.velocity.x;
+    this.position.y += this.velocity.y;
   }
 }
 
 // object creation
 const player = new Player();
 const projectiles = [];
-const invaders = [];
+const grids = [new EnemyGrid()];
 
 // key tracker
 const keys = {
@@ -137,6 +166,15 @@ function animate() {
   c.fillStyle = "black";
   c.fillRect(0, 0, canvas.width, canvas.height);
 
+  grids.forEach((grid) => {
+    grid.invaders.forEach((invader) => {
+      invader.update({
+        velocity: {
+          x: 3,
+        },
+      });
+    });
+  });
   player.update();
   projectiles.forEach((projectile, index) => {
     // when a bullet hits uppor bound, that 'projectiles' array element is deleted from array
